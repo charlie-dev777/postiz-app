@@ -1,6 +1,5 @@
 # render.yaml - Final Blueprint Configuration
 
-# 'services' holds all running applications, including Redis.
 services:
   # 1. The Postiz Web Application Service
   - type: web
@@ -9,20 +8,17 @@ services:
     dockerfilePath: ./Dockerfile
     plan: free
     envVars:
-      # This links to the PostgreSQL database defined below
       - key: DATABASE_URL
         fromDatabase:
           name: postiz-db
           property: connectionString
-      # This links to the Redis service defined below
       - key: REDIS_URL
         fromService:
-          type: pserv # 'pserv' is the correct type for the link
+          type: redis # ← fixed this from pserv to redis
           name: postiz-redis
           property: connectionString
       - key: JWT_SECRET
         generateValue: true
-      # These will be set in the Render Dashboard after the first deploy
       - key: MAIN_URL
         value: ""
       - key: FRONTEND_URL
@@ -31,12 +27,11 @@ services:
         value: ""
 
   # 2. The Redis Cache Service
-  - type: redis # The service type is 'redis'
+  - type: redis
     name: postiz-redis
     plan: free
-    ipAllowList: [] # Allows other services in your account to connect
+    ipAllowList: []
 
-# 'databases' is ONLY for PostgreSQL.
 databases:
   # 3. The PostgreSQL Database
   - name: postiz-db
