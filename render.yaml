@@ -1,0 +1,53 @@
+# render.yaml - Blueprint configuration for deploying Postiz on Render
+
+services:
+  # ----------------- #
+  #  Postiz Web App   #
+  # ----------------- #
+  - type: web
+    name: postiz
+    # Tell Render to use Docker for the environment
+    runtime: docker
+    # Use the pre-built Docker image from the Postiz team
+    dockerfilePath: ./Dockerfile
+    # Render's free instances will spin down after 15 mins of inactivity.
+    # You can upgrade to a paid plan for always-on service.
+    plan: free
+
+    # Define environment variables required by Postiz
+    envVars:
+      # --- These are automatically populated by Render ---
+      - key: DATABASE_URL
+        fromDatabase:
+          name: postiz-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: postiz-redis
+          property: connectionString
+      # Let Render generate a secure, random string for the JWT Secret
+      - key: JWT_SECRET
+        generateValue: true
+      # --- You will set these manually in the Render Dashboard (Step 4) ---
+      - key: MAIN_URL
+        value: "" # Leave empty for now
+      - key: FRONTEND_URL
+        value: "" # Leave empty for now
+      - key: NEXT_PUBLIC_BACKEND_URL
+        value: "" # Leave empty for now
+
+databases:
+  # ----------------- #
+  # PostgreSQL DB     #
+  # ----------------- #
+  - name: postiz-db
+    databaseName: postiz
+    user: postiz
+    plan: free
+
+  # ----------------- #
+  #    Redis Cache    #
+  # ----------------- #
+  - name: postiz-redis
+    ipAllowList: [] # Allow access from all services in your Render account
+    plan: free
