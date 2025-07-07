@@ -1,54 +1,49 @@
-# render.yaml - Blueprint configuration for deploying Postiz on Render
+# render.yaml - CORRECTED BLUEPRINT
 
+# The top-level 'services' key holds all running applications and services.
 services:
   # ----------------- #
   #  Postiz Web App   #
   # ----------------- #
   - type: web
     name: postiz
-    # Tell Render to use Docker for the environment
     runtime: docker
-    # Use the pre-built Docker image from the Postiz team
     dockerfilePath: ./Dockerfile
-    # Render's free instances will spin down after 15 mins of inactivity.
-    # You can upgrade to a paid plan for always-on service.
     plan: free
-
-    # Define environment variables required by Postiz
     envVars:
-      # --- These are automatically populated by Render ---
       - key: DATABASE_URL
         fromDatabase:
           name: postiz-db
           property: connectionString
       - key: REDIS_URL
         fromService:
-          type: pserv
+          type: pserv # Note: When linking to Redis, you still use 'pserv'
           name: postiz-redis
           property: connectionString
-      # Let Render generate a secure, random string for the JWT Secret
       - key: JWT_SECRET
         generateValue: true
-      # --- You will set these manually in the Render Dashboard (Step 4) ---
       - key: MAIN_URL
-        value: "" # Leave empty for now
+        value: "" # You will set this in the Render UI after the first deploy
       - key: FRONTEND_URL
-        value: "" # Leave empty for now
+        value: "" # You will set this in the Render UI after the first deploy
       - key: NEXT_PUBLIC_BACKEND_URL
-        value: "" # Leave empty for now
-
-databases:
-  # ----------------- #
-  # PostgreSQL DB     #
-  # ----------------- #
-  - name: postiz-db
-    databaseName: postiz
-    user: postiz
-    plan: free
+        value: "" # You will set this in the Render UI after the first deploy
 
   # ----------------- #
   #    Redis Cache    #
   # ----------------- #
-  - name: postiz-redis
-    ipAllowList: [] # Allow access from all services in your Render account
+  # Redis is defined as a service, not a database.
+  - type: redis # <<< THIS IS THE KEY CHANGE
+    name: postiz-redis
+    ipAllowList: []
+    plan: free
+
+# The top-level 'databases' key is only for PostgreSQL.
+databases:
+  # ----------------- #
+  #   PostgreSQL DB   #
+  # ----------------- #
+  - name: postiz-db
+    databaseName: postiz
+    user: postiz
     plan: free
