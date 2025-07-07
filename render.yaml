@@ -1,6 +1,5 @@
 # render.yaml - CORRECTED BLUEPRINT
 
-# The top-level 'services' key holds all running applications and services.
 services:
   # ----------------- #
   #  Postiz Web App   #
@@ -17,28 +16,27 @@ services:
           property: connectionString
       - key: REDIS_URL
         fromService:
-          type: pserv # Note: When linking to Redis, you still use 'pserv'
+          type: pserv
           name: postiz-redis
           property: connectionString
       - key: JWT_SECRET
         generateValue: true
       - key: MAIN_URL
-        value: "" # You will set this in the Render UI after the first deploy
+        value: ""
       - key: FRONTEND_URL
-        value: "" # You will set this in the Render UI after the first deploy
+        value: ""
       - key: NEXT_PUBLIC_BACKEND_URL
-        value: "" # You will set this in the Render UI after the first deploy
+        value: ""
 
   # ----------------- #
   #    Redis Cache    #
   # ----------------- #
-  # Redis is defined as a service, not a database.
-  - type: redis # <<< THIS IS THE KEY CHANGE
+  - type: redis
     name: postiz-redis
     ipAllowList: []
     plan: free
 
-# The top-level 'databases' key is only for PostgreSQL.
+# Correctly outdented to the root level
 databases:
   # ----------------- #
   #   PostgreSQL DB   #
