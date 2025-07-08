@@ -31,6 +31,7 @@
     "start:prod:frontend": "pnpm --filter ./apps/frontend run start",
     "start:prod:workers": "pnpm --filter ./apps/workers run start",
     "start:prod:cron": "pnpm --filter ./apps/cron run start",
+    "start": "pnpm run start:prod:backend",
     "update-plugins": "node build.plugins.js",
     "dev:docker": "docker compose -f ./docker-compose.dev.yaml up -d",
     "commands:build:development": "pnpm --filter ./apps/commands run build",
